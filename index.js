@@ -50,7 +50,7 @@ async function run() {
           projection: { title: 1, price: 1, service_id: 1, img: 1, customerName: 1, email: 1, service: 1}
         };
 
-        const result = await serviceCollection.findOne(query);
+        const result = await serviceCollection.findOne(query, options);
         res.send(result);
     })
 
@@ -70,6 +70,27 @@ async function run() {
         console.log(booking);
         const result = await bookingCollection.insertOne(booking)
         res.send(result)
+    })
+
+    app.patch('/bookings/:id', async(req, res)=>{
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id)};
+      const updateBooking = req.body;
+      console.log(updateBooking);
+      const updateDoc = {
+        $set: {
+          status: updateBooking.status
+        },
+      };
+      const result = await bookingCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    })
+
+    app.delete('/bookings/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await bookingCollection.deleteOne(query);
+      res.send(result);
     })
 
     // Send a ping to confirm a successful connection
